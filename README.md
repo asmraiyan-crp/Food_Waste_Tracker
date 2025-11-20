@@ -1,6 +1,6 @@
 # 🍏 FoodTracker - Innovatex Hackathon (Part 1)
 
-### SDG 2: Zero Hunger \| \[cite_start\]SDG 12: Responsible Consumption \[cite: 2, 8\]
+### SDG 2: Zero Hunger \| SDG 12: Responsible Consumption
 
 **FoodTracker** is a full-stack web application designed to help
 individuals and households reduce food waste. By tracking inventory
@@ -11,30 +11,27 @@ promote mindful food planning and security.
 
 ## 🛠️ Tech Stack
 
--   \[cite_start\]**Backend:** Python 3.13, Django 5.x \[cite: 14\]
--   \[cite_start\]**Database:** PostgreSQL (Production-ready) \[cite:
-    15\]
--   \[cite_start\]**Frontend:** HTML5, Bootstrap 4, CSS (Responsive)
-    \[cite: 16\]
+-   **Backend:** Python 3.13, Django 5.x
+-   **Database:** PostgreSQL (Production-ready)
+-   **Frontend:** HTML5, Bootstrap 4, CSS (Responsive)
 -   **Architecture:** Model-View-Template (MVT)
 
 ------------------------------------------------------------------------
 
 ## ✨ Part 1 Features (Pre-Hack Requirements)
 
-1.  \[cite_start\]**Authentication:** Secure User Registration & Login
-    (Session-based)\[cite: 20\].
-2.  \[cite_start\]**Smart Inventory:** Track food items with expiry
-    dates, categories, and quantity\[cite: 38, 40\].
-3.  \[cite_start\]**Visual Alerts:** Color-coded status logic
-    (Red=Expired, Yellow=Expiring Soon, Green=Safe)\[cite: 62, 64\].
-4.  \[cite_start\]**Sustainability Resources:** Educational tips mapped
-    to your inventory categories (e.g., Dairy tips for Milk)\[cite: 52,
-    65\].
-5.  \[cite_start\]**Seed Data Script:** Automated population of 20+
-    items and resources for testing\[cite: 46, 59\].
-6.  \[cite_start\]**Image Upload:** Interface for receipt scanning (UI
-    implementation for future AI integration)\[cite: 68\].
+1.  **Authentication:** Secure User Registration & Login
+    (Session-based).
+2.  **Smart Inventory:** Track food items with expiry
+    dates, categories, and quantity.
+3.  **Visual Alerts:** Color-coded status logic
+    (Red=Expired, Yellow=Expiring Soon, Green=Safe).
+4.  **Sustainability Resources:** Educational tips mapped
+    to your inventory categories (e.g., Dairy tips for Milk) 
+5.  **Seed Data Script:** Automated population of 20+
+    items and resources for testing].
+6.  **Image Upload:** Interface for receipt scanning (UI
+    implementation for future AI integration).
 
 ------------------------------------------------------------------------
 

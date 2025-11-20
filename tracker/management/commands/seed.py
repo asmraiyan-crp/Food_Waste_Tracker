@@ -7,10 +7,10 @@ from datetime import date, timedelta
 import random
 
 class Command(BaseCommand):
-    help = 'Seeds the database with Bangladesh-relevant Food Items & Resources (Demo Ready!)'
+    help = 'Seeds the database with realistic Food Items & Resources (Demo Ready!)'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write("Starting Bangladesh-style database seeding...")
+        self.stdout.write("Starting Food Seeder...")
 
         # 1. Create or get demo user
         user, created = User.objects.get_or_create(username='demo_user')
@@ -23,61 +23,61 @@ class Command(BaseCommand):
         # 2. Clear old food items
         FoodItem.objects.all().delete()
 
-        # 3. Raw Food Items (Bangla + English names)
+        # 3. Raw Food Items — English first, Bangla in brackets
         food_data = [
-            ("Dudh (Milk)", "Dairy", 1),
-            ("Cha Milk Powder (Milk Powder)", "Dairy", 180),
-            ("Doi (Yogurt)", "Dairy", 6),
+            ("Milk (Dudh)", "Dairy", 1),
+            ("Milk Powder (Cha Milk Powder)", "Dairy", 180),
+            ("Yogurt (Doi)", "Dairy", 6),
             ("Ghee", "Dairy", 120),
-            ("Dim (Eggs)", "Dairy", 18),
+            ("Eggs (Dim)", "Dairy", 18),
 
-            ("Rui Maach (Rohu Fish)", "Meat", 1),
-            ("Ilish Maach (Hilsa Fish)", "Meat", 0),
-            ("Pangash Maach (Pangas Fish)", "Meat", 2),
-            ("Telapia Maach (Tilapia Fish)", "Meat", 2),
+            ("Rohu Fish (Rui Maach)", "Meat", 1),
+            ("Hilsa Fish (Ilish Maach)", "Meat", 0),
+            ("Pangas Fish (Pangash Maach)", "Meat", 2),
+            ("Tilapia Fish (Telapia Maach)", "Meat", 2),
             ("Beef (Raw Beef)", "Meat", 2),
             ("Mutton (Raw Mutton)", "Meat", 3),
             ("Chicken (Raw Chicken)", "Meat", 2),
-            ("Chingri (Prawn/Shrimp)", "Meat", 1),
+            ("Prawn/Shrimp (Chingri)", "Meat", 1),
 
-            ("Aloo (Potato)", "Vegetables", 25),
-            ("Piyaj (Onion)", "Vegetables", 30),
-            ("Roshun (Garlic)", "Vegetables", 45),
-            ("Ada (Ginger)", "Vegetables", 20),
-            ("Shak (Spinach/Red Amaranth)", "Vegetables", 1),
-            ("Lao (Bottle Gourd)", "Vegetables", 5),
-            ("Kumro (Pumpkin)", "Vegetables", 15),
-            ("Begun (Brinjal/Eggplant)", "Vegetables", 4),
-            ("Barbati (Yardlong Bean)", "Vegetables", 3),
-            ("Dherosh (Okra/Ladyfinger)", "Vegetables", 3),
-            ("Potol (Pointed Gourd)", "Vegetables", 5),
-            ("Kacha Kola (Green Banana)", "Vegetables", 4),
+            ("Potato (Aloo)", "Vegetables", 25),
+            ("Onion (Piyaj)", "Vegetables", 30),
+            ("Garlic (Roshun)", "Vegetables", 45),
+            ("Ginger (Ada)", "Vegetables", 20),
+            ("Spinach/Red Amaranth (Shak)", "Vegetables", 1),
+            ("Bottle Gourd (Lao)", "Vegetables", 5),
+            ("Pumpkin (Kumro)", "Vegetables", 15),
+            ("Eggplant (Begun)", "Vegetables", 4),
+            ("Yardlong Bean (Barbati)", "Vegetables", 3),
+            ("Okra (Dherosh)", "Vegetables", 3),
+            ("Pointed Gourd (Potol)", "Vegetables", 5),
+            ("Green Banana (Kacha Kola)", "Vegetables", 4),
 
-            ("Kola (Banana)", "Fruits", 3),
-            ("Aam (Mango)", "Fruits", 5),
-            ("Peyara (Guava)", "Fruits", 7),
-            ("Lebu (Lemon/Lime)", "Fruits", 20),
-            ("Kamranga (Star Fruit)", "Fruits", 6),
-            ("Anarosh (Pineapple)", "Fruits", 4),
-            ("Dalim (Pomegranate)", "Fruits", 10),
+            ("Banana (Kola)", "Fruits", 3),
+            ("Mango (Aam)", "Fruits", 5),
+            ("Guava (Peyara)", "Fruits", 7),
+            ("Lemon/Lime (Lebu)", "Fruits", 20),
+            ("Star Fruit (Kamranga)", "Fruits", 6),
+            ("Pineapple (Anarosh)", "Fruits", 4),
+            ("Pomegranate (Dalim)", "Fruits", 10),
 
-            ("Chal (Rice)", "Grains", 365),
-            ("Dal (Lentils - Masoor/Moong)", "Grains", 240),
-            ("Mug Dal (Mung Beans)", "Grains", 240),
-            ("Atta (Wheat Flour)", "Grains", 90),
-            ("Suji (Semolina)", "Grains", 180),
+            ("Rice (Chal)", "Grains", 365),
+            ("Lentils (Dal - Masoor/Moong)", "Grains", 240),
+            ("Mung Beans (Mug Dal)", "Grains", 240),
+            ("Wheat Flour (Atta)", "Grains", 90),
+            ("Semolina (Suji)", "Grains", 180),
 
-            ("Chanachur (Spicy Mixture)", "Snacks", 90),
+            ("Spicy Mixture (Chanachur)", "Snacks", 90),
             ("Biscuits", "Snacks", 120),
-            ("Muri (Puffed Rice)", "Snacks", 180),
-            ("Chira (Flattened Rice)", "Snacks", 365),
+            ("Puffed Rice (Muri)", "Snacks", 180),
+            ("Flattened Rice (Chira)", "Snacks", 365),
             ("Noodles", "Snacks", 240),
-            ("Achar (Pickle)", "Snacks", 365),
+            ("Pickle (Achar)", "Snacks", 365),
 
-            ("Tel (Cooking Oil)", "Others", 180),
-            ("Morich Gura (Chili Powder)", "Others", 365),
-            ("Holud Gura (Turmeric Powder)", "Others", 365),
-            ("Cha Pata (Tea Leaves)", "Others", 365),
+            ("Cooking Oil (Tel)", "Others", 180),
+            ("Chili Powder (Morich Gura)", "Others", 365),
+            ("Turmeric Powder (Holud Gura)", "Others", 365),
+            ("Tea Leaves (Cha Pata)", "Others", 365),
         ]
 
         for name, category, days in food_data:
@@ -90,9 +90,9 @@ class Command(BaseCommand):
                 expiry_date=expiry
             )
 
-        self.stdout.write(f"   Seeded {len(food_data)} Bangladesh-relevant food items!")
+        self.stdout.write(f"   Seeded {len(food_data)} food items (English + Bangla)")
 
-        # 4. Keep your original 20 resources (no change needed)
+        # 4. Resources (unchanged)
         Resource.objects.all().delete()
         resource_data = [
             ("How to Store Milk", "Dairy", "Article"),
@@ -127,5 +127,5 @@ class Command(BaseCommand):
             )
         self.stdout.write(f"   Seeded {len(resource_data)} Resources.")
 
-        self.stdout.write(self.style.SUCCESS('Database Seeded Successfully!'))
-        self.stdout.write(self.style.SUCCESS('   Login: demo_user | Password: password123'))
+        self.stdout.write(self.style.SUCCESS('Food Seeder Completed Successfully!'))
+        self.stdout.write(self.style.SUCCESS('   Login → Username: demo_user | Password: password123'))

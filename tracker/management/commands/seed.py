@@ -1,131 +1,109 @@
-# tracker/management/commands/seed_data.py
-
 from django.core.management.base import BaseCommand
-from tracker.models import FoodItem, Resource
+from tracker.models import FoodItem, Resource, Profile
 from django.contrib.auth.models import User
 from datetime import date, timedelta
 import random
 
 class Command(BaseCommand):
-    help = 'Seeds the database with realistic Food Items & Resources (Demo Ready!)'
+    help = 'Seeds the database with Part 1 Requirements (Profiles, Foods, Resources)'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write("Starting Food Seeder...")
+        self.stdout.write("🌱 Starting Database Seeder...")
 
-        # 1. Create or get demo user
+        # ---------------------------------------------------------
+        # 1. Create Demo User & Profile (Requirement 1 & 2)
+        # ---------------------------------------------------------
         user, created = User.objects.get_or_create(username='demo_user')
         if created:
             user.set_password('password123')
-            user.email = 'demo@ecofridge.com'
+            user.email = 'demo@innovatex.com'
+            user.first_name = "Rahim"
+            user.last_name = "Ahmed"
             user.save()
-            self.stdout.write("   Created demo_user (login: demo_user / password123)")
+            self.stdout.write("   - Created User: demo_user (password123)")
+        
+        # Update the Profile (Auto-created by signal, but we set values here)
+        profile = Profile.objects.get(user=user)
+        profile.household_size = 4
+        profile.dietary_preferences = "Halal, Omnivore"
+        profile.budget_range = "Medium"
+        profile.location = "Mirpur, Dhaka"
+        profile.save()
+        self.stdout.write(f"   - Updated Profile: {profile.location}, {profile.household_size} members")
 
-        # 2. Clear old food items
-        FoodItem.objects.all().delete()
+        # ---------------------------------------------------------
+        # 2. Seed Food Inventory (Requirement 3)
+        # ---------------------------------------------------------
+        # Clear old data
+        FoodItem.objects.filter(user=user).delete()
 
-        # 3. Raw Food Items — English first, Bangla in brackets
         food_data = [
-            ("Milk (Dudh)", "Dairy", 1),
-            ("Milk Powder (Cha Milk Powder)", "Dairy", 180),
+            # (Name, Category, Days until expiry)
+            ("Milk (Dudh)", "Dairy", 2),
             ("Yogurt (Doi)", "Dairy", 6),
-            ("Ghee", "Dairy", 120),
-            ("Eggs (Dim)", "Dairy", 18),
-
-            ("Rohu Fish (Rui Maach)", "Meat", 1),
-            ("Hilsa Fish (Ilish Maach)", "Meat", 0),
-            ("Pangas Fish (Pangash Maach)", "Meat", 2),
-            ("Tilapia Fish (Telapia Maach)", "Meat", 2),
-            ("Beef (Raw Beef)", "Meat", 2),
-            ("Mutton (Raw Mutton)", "Meat", 3),
-            ("Chicken (Raw Chicken)", "Meat", 2),
-            ("Prawn/Shrimp (Chingri)", "Meat", 1),
-
-            ("Potato (Aloo)", "Vegetables", 25),
+            ("Eggs (Dim)", "Dairy", 12),
+            ("Rohu Fish (Rui)", "Meat", 1),
+            ("Chicken Breast", "Meat", 3),
+            ("Beef (Gorur Mangsho)", "Meat", 2),
+            ("Spinach (Palong Shak)", "Vegetables", 1),
+            ("Potato (Aloo)", "Vegetables", 20),
             ("Onion (Piyaj)", "Vegetables", 30),
-            ("Garlic (Roshun)", "Vegetables", 45),
-            ("Ginger (Ada)", "Vegetables", 20),
-            ("Spinach/Red Amaranth (Shak)", "Vegetables", 1),
-            ("Bottle Gourd (Lao)", "Vegetables", 5),
-            ("Pumpkin (Kumro)", "Vegetables", 15),
-            ("Eggplant (Begun)", "Vegetables", 4),
-            ("Yardlong Bean (Barbati)", "Vegetables", 3),
-            ("Okra (Dherosh)", "Vegetables", 3),
-            ("Pointed Gourd (Potol)", "Vegetables", 5),
-            ("Green Banana (Kacha Kola)", "Vegetables", 4),
-
-            ("Banana (Kola)", "Fruits", 3),
-            ("Mango (Aam)", "Fruits", 5),
-            ("Guava (Peyara)", "Fruits", 7),
-            ("Lemon/Lime (Lebu)", "Fruits", 20),
-            ("Star Fruit (Kamranga)", "Fruits", 6),
-            ("Pineapple (Anarosh)", "Fruits", 4),
-            ("Pomegranate (Dalim)", "Fruits", 10),
-
-            ("Rice (Chal)", "Grains", 365),
-            ("Lentils (Dal - Masoor/Moong)", "Grains", 240),
-            ("Mung Beans (Mug Dal)", "Grains", 240),
-            ("Wheat Flour (Atta)", "Grains", 90),
-            ("Semolina (Suji)", "Grains", 180),
-
-            ("Spicy Mixture (Chanachur)", "Snacks", 90),
-            ("Biscuits", "Snacks", 120),
-            ("Puffed Rice (Muri)", "Snacks", 180),
-            ("Flattened Rice (Chira)", "Snacks", 365),
-            ("Noodles", "Snacks", 240),
-            ("Pickle (Achar)", "Snacks", 365),
-
-            ("Cooking Oil (Tel)", "Others", 180),
-            ("Chili Powder (Morich Gura)", "Others", 365),
-            ("Turmeric Powder (Holud Gura)", "Others", 365),
-            ("Tea Leaves (Cha Pata)", "Others", 365),
+            ("Green Chilies", "Vegetables", 5),
+            ("Lentils (Masoor Dal)", "Grains", 180),
+            ("Rice (Miniket)", "Grains", 365),
+            ("Banana (Sagor Kola)", "Fruits", 3),
+            ("Mango", "Fruits", 5),
+            ("Guava", "Fruits", 4),
+            ("Chanachur", "Snacks", 60),
+            ("Biscuits", "Snacks", 90),
+            ("Mustard Oil", "Grains", 365),
+            ("Turmeric Powder", "Grains", 365),
+            ("Tea Leaves", "Snacks", 180),
         ]
 
-        for name, category, days in food_data:
+        for name, cat, days in food_data:
             expiry = date.today() + timedelta(days=days)
             FoodItem.objects.create(
                 user=user,
                 name=name,
-                category=category,
-                quantity=random.randint(1, 6),
-                expiry_date=expiry
+                category=cat,
+                quantity=random.randint(1, 5),
+                expiry_date=expiry,
+                cost_per_unit=random.randint(50, 500)
             )
+        self.stdout.write(f"   - Seeded {len(food_data)} Food Items")
 
-        self.stdout.write(f"   Seeded {len(food_data)} food items (English + Bangla)")
-
-        # 4. Resources (unchanged)
+        # ---------------------------------------------------------
+        # 3. Seed Resources (Requirement 4)
+        # ---------------------------------------------------------
         Resource.objects.all().delete()
+        
         resource_data = [
             ("How to Store Milk", "Dairy", "Article"),
-            ("Can you freeze cheese?", "Dairy", "Video"),
-            ("Creative uses for sour milk", "Dairy", "Article"),
-            ("Yogurt storage hacks", "Dairy", "Article"),
-            ("Keep Apples Crisp", "Fruits", "Video"),
-            ("Banana Bread Recipe (Zero Waste)", "Fruits", "Article"),
-            ("Freezing Berries Guide", "Fruits", "Article"),
+            ("Freezing Cheese Guide", "Dairy", "Video"),
+            ("Keep Leafy Greens Fresh", "Vegetables", "Article"),
             ("Regrow Green Onions", "Vegetables", "Video"),
-            ("Keep Lettuce Fresh for Weeks", "Vegetables", "Article"),
-            ("Root Vegetable Storage", "Vegetables", "Article"),
-            ("Freezing Raw Meat Safely", "Meat", "Article"),
-            ("Understanding Meat Expiry Labels", "Meat", "Video"),
-            ("Leftover Chicken Recipes", "Meat", "Article"),
+            ("Root Veggie Storage", "Vegetables", "Article"),
+            ("Banana Storage Hacks", "Fruits", "Video"),
+            ("Freezing Berries", "Fruits", "Article"),
+            ("Meat Safety 101", "Meat", "Article"),
+            ("Understanding Expiry Labels", "Meat", "Video"),
             ("Pantry Moth Prevention", "Grains", "Article"),
-            ("Rice Storage 101", "Grains", "Video"),
-            ("Revive Stale Bread", "Grains", "Article"),
-            ("Healthy Snack Portions", "Snacks", "Article"),
-            ("Eco-friendly Snack Packaging", "Snacks", "Video"),
-            ("Composting 101", "Vegetables", "Article"),
-            ("Understanding 'Best By' vs 'Use By'", "Dairy", "Article"),
+            ("Rice Storage Tips", "Grains", "Video"),
+            ("Zero Waste Cooking", "Vegetables", "Article"),
+            ("Composting Basics", "Vegetables", "Video"),
+            ("Meal Planning on a Budget", "Grains", "Article"),
+            ("Leftover Makeovers", "Meat", "Article"),
         ]
 
         for title, cat, rtype in resource_data:
             Resource.objects.create(
                 title=title,
-                description=f"Learn sustainable habits for {cat}. Reduce waste and save money.",
-                url="https://www.un.org/sustainabledevelopment/sustainable-consumption-production/",
+                description=f"Learn how to extend the shelf life of {cat} and reduce waste.",
+                url="https://www.fao.org/food-loss-and-food-waste/flw-data)",
                 category=cat,
                 resource_type=rtype
             )
-        self.stdout.write(f"   Seeded {len(resource_data)} Resources.")
+        self.stdout.write(f"   - Seeded {len(resource_data)} Resources")
 
-        self.stdout.write(self.style.SUCCESS('Food Seeder Completed Successfully!'))
-        self.stdout.write(self.style.SUCCESS('   Login → Username: demo_user | Password: password123'))
+        self.stdout.write(self.style.SUCCESS('✅ Database Seeded Successfully!'))

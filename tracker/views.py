@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .models import FoodItem , Resource
-from .forms import FoodItemForm
+from .models import FoodItem , Resource , Profile , ConsumptionLog
+from .forms import FoodItemForm ,ProfileForm
 
 def register(request):
     if request.method == 'POST':
@@ -66,6 +66,68 @@ def delete_item(request, pk):
         return redirect('dashboard')
     return render(request, 'tracker/delete_confirm.html', {'item': item})
 
+@login_required
+def profile(request):
+    # Get or create profile to avoid errors
+    profile_obj, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        p_form = ProfileForm(request.POST, instance=profile_obj)
+        
+        # Update basic User model fields
+        user = request.user
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.email = request.POST.get('email')
+        
+        if p_form.is_valid():
+            user.save()
+            p_form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+            
+    else:
+        p_form = ProfileForm(instance=profile_obj)
+
+    return render(request, 'tracker/profile.html', {'p_form': p_form, 'user': request.user})
+
+
+# --- REQUIREMENT 2: Log Consumption ---
+@login_required
+def log_food(request, pk):
+    # Fetch the inventory item
+    item = get_object_or_404(FoodItem, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        consumed_qty = 1 
+        
+        # Create the Log Entry with the dependency
+        ConsumptionLog.objects.create(
+            user=request.user,
+            source_item=item,
+            food_name=item.name,
+            category=item.category,
+            quantity=consumed_qty
+        )
+        
+        # Update Inventory Logic
+        if item.quantity > 1:
+            item.quantity -= 1
+            item.save()
+            messages.success(request, f"Logged 1 unit of {item.name}.")
+        else:
+            item.delete()
+            messages.success(request, f"Finished {item.name}. Moved to history.")
+            
+        return redirect('dashboard')
+        
+    return render(request, 'tracker/log_confirm.html', {'item': item})
+
+# --- REQUIREMENT 2: History Page ---
+@login_required
+def consumption_history(request):
+    logs = ConsumptionLog.objects.filter(user=request.user).order_by('-date_consumed')
+    return render(request, 'tracker/history.html', {'logs': logs})
 
 
 # Add this import at the top

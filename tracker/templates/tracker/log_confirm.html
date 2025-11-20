@@ -1,0 +1,22 @@
+{% extends 'tracker/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5 border-primary">
+            <div class="card-header bg-primary text-white">
+                Log Consumption
+            </div>
+            <div class="card-body text-center">
+                <h5>Did you consume 1 unit of <strong>{{ item.name }}</strong>?</h5>
+                <p class="text-muted">This will be added to your history log.</p>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success btn-lg mr-2">Yes, Log It</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

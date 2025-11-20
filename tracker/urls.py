@@ -16,6 +16,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('log-food/<int:pk>/', views.log_food, name='log_food'),
     path('history/', views.consumption_history, name='history'),
+    path('upload-image/<int:pk>/', views.upload_image, name='upload_image'),
+    path('delete-image/<int:pk>/', views.delete_image, name='delete_image'),
     
     # CRUD
     path('add/', views.add_item, name='add_item'),

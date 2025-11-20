@@ -27,14 +27,11 @@
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Items</div>
                         <div class="h3 mb-0 font-weight-bold text-gray-800">{{ total }}</div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-box fa-2x text-gray-300" style="color: #d1fae5;"></i>
-                    </div>
+                    <div class="col-auto"><i class="fas fa-box fa-2x" style="color: #d1fae5;"></i></div>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="col-md-4 mb-3">
         <div class="card border-left-warning shadow-sm h-100 py-2" style="border-left: 4px solid #f59e0b;">
             <div class="card-body">
@@ -43,14 +40,11 @@
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Expiring Soon</div>
                         <div class="h3 mb-0 font-weight-bold text-gray-800">{{ soon_count }}</div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-exclamation-triangle fa-2x" style="color: #fce7f3;"></i>
-                    </div>
+                    <div class="col-auto"><i class="fas fa-exclamation-triangle fa-2x" style="color: #fce7f3;"></i></div>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="col-md-4 mb-3">
         <div class="card border-left-danger shadow-sm h-100 py-2" style="border-left: 4px solid #ef4444;">
             <div class="card-body">
@@ -59,28 +53,34 @@
                         <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Expired</div>
                         <div class="h3 mb-0 font-weight-bold text-gray-800">{{ expired_count }}</div>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-trash-alt fa-2x" style="color: #fee2e2;"></i>
-                    </div>
+                    <div class="col-auto"><i class="fas fa-trash-alt fa-2x" style="color: #fee2e2;"></i></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-header py-3 bg-white border-bottom-0">
-        <h6 class="m-0 font-weight-bold text-dark">Current Inventory</h6>
-    </div>
+<div class="mb-3">
+    <span class="mr-2 font-weight-bold">Filter by:</span>
+    <a href="{% url 'dashboard' %}" class="btn btn-sm btn-light border rounded-pill mr-1 {% if not current_filter %}active bg-secondary text-white{% endif %}">All</a>
+    <a href="?category=Dairy" class="btn btn-sm btn-light border rounded-pill mr-1 {% if current_filter == 'Dairy' %}active bg-success text-white{% endif %}">Dairy</a>
+    <a href="?category=Vegetables" class="btn btn-sm btn-light border rounded-pill mr-1 {% if current_filter == 'Vegetables' %}active bg-success text-white{% endif %}">Veg</a>
+    <a href="?category=Meat" class="btn btn-sm btn-light border rounded-pill mr-1 {% if current_filter == 'Meat' %}active bg-success text-white{% endif %}">Meat</a>
+    <div class="vr d-inline-block align-middle mx-2" style="height: 20px; width: 1px; background: #ccc;"></div>
+    <a href="?status=soon" class="btn btn-sm btn-warning text-dark border rounded-pill mr-1 {% if current_filter == 'soon' %}font-weight-bold border-dark{% endif %}">⚠️ Expiring Soon</a>
+    <a href="?status=expired" class="btn btn-sm btn-danger border rounded-pill mr-1 {% if current_filter == 'expired' %}font-weight-bold border-dark{% endif %}">❌ Expired</a>
+</div>
+
+<div class="card shadow-sm mb-5">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" width="100%" cellspacing="0">
-                <thead class="bg-light text-dark">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
                     <tr>
-                        <th class="border-top-0 pl-4">Item Name</th>
+                        <th class="pl-4 border-top-0">Item</th>
                         <th class="border-top-0">Category</th>
                         <th class="border-top-0">Qty</th>
-                        <th class="border-top-0">Expiry Date</th>
+                        <th class="border-top-0">Expires</th>
                         <th class="border-top-0">Status</th>
                         <th class="border-top-0 text-center">Actions</th>
                     </tr>
@@ -88,53 +88,66 @@
                 <tbody>
                     {% for item in items %}
                     <tr>
-                        <td class="pl-4 align-middle">
-                            <strong>{{ item.name }}</strong>
+                        <td class="pl-4 align-middle font-weight-bold">
+                            {{ item.name }}
                             {% if item.receipt_image %}
-                                <br><small><a href="{{ item.receipt_image.url }}" target="_blank" class="text-muted"><i class="fas fa-paperclip"></i> Receipt</a></small>
+                                <i class="fas fa-paperclip text-muted ml-1" title="Receipt Attached"></i>
                             {% endif %}
                         </td>
                         <td class="align-middle"><span class="badge badge-light border">{{ item.category }}</span></td>
                         <td class="align-middle">{{ item.quantity }}</td>
-                        <td class="align-middle">{{ item.expiry_date|date:"M d, Y" }}</td>
+                        <td class="align-middle">{{ item.expiry_date|date:"M d" }}</td>
                         <td class="align-middle">
                             {% if item.days_remaining < 0 %}
-                                <span class="badge badge-danger px-2 py-1">Expired ({{ item.days_remaining|stringformat:"d"|slice:"1:" }} days ago)</span>
+                                <span class="badge badge-danger">Expired ({{ item.days_remaining|stringformat:"d"|slice:"1:" }} days ago)</span>
                             {% elif item.days_remaining <= 3 %}
-                                <span class="badge badge-warning px-2 py-1">Expiring in {{ item.days_remaining }} days</span>
+                                <span class="badge badge-warning text-dark">Expiring in {{ item.days_remaining }} days</span>
                             {% else %}
-                                <span class="badge badge-success px-2 py-1">{{ item.days_remaining }} days left</span>
+                                <span class="badge badge-success">{{ item.days_remaining }} days left</span>
                             {% endif %}
                         </td>
                         <td class="align-middle text-center">
-                            <div class="btn-group" role="group">
-                                <a href="{% url 'log_food' item.pk %}" class="btn btn-sm btn-outline-primary" title="Log Consumption">
-                                    <i class="fas fa-utensils"></i> Eat
+                            <div class="btn-group">
+                                <a href="{% url 'log_food' item.pk %}" class="btn btn-sm btn-outline-primary" title="Eat/Log">
+                                    <i class="fas fa-utensils"></i>
                                 </a>
-                                
-                                <a href="{% url 'edit_item' item.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit Item">
+                                <a href="{% url 'edit_item' item.pk %}" class="btn btn-sm btn-outline-secondary" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                
-                                <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-outline-danger" title="Delete Item">
+                                <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
                         </td>
                     </tr>
                     {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="fas fa-carrot fa-3x mb-3 text-light"></i>
-                                <p>Your fridge is empty! <a href="{% url 'add_item' %}">Add some food</a> or <a href="#" onclick="alert('Run python manage.py seed in terminal')">Seed Data</a>.</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <tr><td colspan="6" class="text-center py-4 text-muted">No items found in this category.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+</div>
+
+<h4 class="mb-3"><i class="fas fa-lightbulb text-warning"></i> Smart Tips For You</h4>
+<div class="row">
+    {% for res in resources %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm" style="background: #f0fdf4;">
+            <div class="card-body">
+                <h6 class="card-title text-success font-weight-bold">{{ res.title }}</h6>
+                <p class="card-text small text-muted">{{ res.description|truncatechars:60 }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <span class="badge badge-white border text-muted">Because you have {{ res.category }}</span>
+                    <a href="{{ res.url }}" target="_blank" class="btn btn-sm btn-success rounded-circle">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-muted">Add items to your inventory to see personalized sustainability tips!</div>
+    {% endfor %}
 </div>
 {% endblock %}

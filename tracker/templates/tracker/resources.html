@@ -1,0 +1,40 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="text-success">📚 Sustainability Resources</h2>
+            <p class="text-muted">Learn how to reduce waste and save money with these guides.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for resource in resources %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge badge-info">{{ resource.category }}</span>
+                        <span class="badge badge-secondary">{{ resource.resource_type }}</span>
+                    </div>
+                    <h5 class="card-title">{{ resource.title }}</h5>
+                    <p class="card-text small">{{ resource.description }}</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{{ resource.url }}" target="_blank" class="btn btn-outline-success btn-block btn-sm">
+                        View {{ resource.resource_type }} ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-warning">
+                No resources found. Please run <code>python manage.py seed</code>.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

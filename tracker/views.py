@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .models import FoodItem
+from .models import FoodItem , Resource
 from .forms import FoodItemForm
 
 def register(request):
@@ -26,6 +26,12 @@ def dashboard(request):
         'soon_count': sum(1 for i in items if 0 <= i.days_remaining <= 3)
     }
     return render(request, 'tracker/dashboard.html', context)
+
+def resources(request):
+    # Fetch all resources
+    all_resources = Resource.objects.all()
+    return render(request, 'tracker/resources.html', {'resources': all_resources})
+    
 
 @login_required
 def add_item(request):
@@ -59,6 +65,8 @@ def delete_item(request, pk):
         item.delete()
         return redirect('dashboard')
     return render(request, 'tracker/delete_confirm.html', {'item': item})
+
+
 
 # Add this import at the top
 from django.shortcuts import render, redirect

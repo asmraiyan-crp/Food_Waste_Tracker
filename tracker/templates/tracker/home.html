@@ -1,41 +1,238 @@
 {% extends 'tracker/base.html' %}
 
 {% block content %}
-<div class="jumbotron text-center bg-white border-bottom shadow-sm">
-    <h1 class="display-4 text-success">🌱 Zero Waste, Zero Hunger</h1>
-    <p class="lead">Smart food tracking to help you reduce waste and save money.</p>
-    <hr class="my-4">
-    <p>Aligned with <strong>SDG 2 (Zero Hunger)</strong> and <strong>SDG 12 (Responsible Consumption)</strong>.</p>
-    <div class="mt-4">
-        <a class="btn btn-primary btn-lg px-4" href="{% url 'register' %}" role="button">Get Started</a>
-        <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'login' %}" role="button">Login</a>
-    </div>
-</div>
+<style>
+    /* ===== SCOPED STYLES FOR HOME PAGE ONLY ===== */
+    :root {
+        --primary-green: #10b981;
+        --primary-dark: #059669;
+        --primary-light: #d1fae5;
+        --primary-pale: #ecfdf5;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --bg-light: #f9fafb;
+        --bg-white: #ffffff;
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
 
-<div class="row text-center mt-5">
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title">🍎 Expiry Tracking</h3>
-                <p class="card-text">Log your groceries and get alerts before your food goes bad. Keep your inventory organized.</p>
+    /* Overwrite some Bootstrap defaults for this page */
+    .jumbotron { background: transparent; }
+
+    /* Hero Section */
+    .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        padding: 4rem 0;
+        background: linear-gradient(135deg, var(--primary-pale) 0%, var(--bg-light) 100%);
+        border-radius: 20px;
+        margin-bottom: 3rem;
+    }
+
+    .hero-content { padding: 2rem; }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .hero-description {
+        font-size: 1.1rem;
+        color: var(--text-light);
+        margin-bottom: 2rem;
+    }
+
+    .hero-image img {
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        transform: rotate(-2deg);
+        transition: transform 0.3s ease;
+    }
+    .hero-image img:hover { transform: rotate(0deg); }
+
+    /* Buttons */
+    .btn-custom-primary {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        transition: transform 0.2s;
+    }
+    .btn-custom-primary:hover {
+        transform: translateY(-3px);
+        color: white;
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-custom-outline {
+        background: transparent;
+        color: var(--primary-green);
+        border: 2px solid var(--primary-green);
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        margin-left: 10px;
+        transition: all 0.2s;
+    }
+    .btn-custom-outline:hover {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        text-decoration: none;
+    }
+
+    /* Features Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--primary-green);
+    }
+
+    .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 20px;
+        margin: 4rem 0;
+        box-shadow: var(--shadow);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero { grid-template-columns: 1fr; text-align: center; }
+        .hero-image { display: none; } /* Hide image on mobile to save space */
+    }
+</style>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">🌱 Zero Waste,<br>Zero Hunger</h1>
+        <p class="hero-subtitle">Smart food tracking to reduce waste and save money.</p>
+        <p class="hero-description">
+            Join thousands of households tracking food smarter. 
+            Fully aligned with <strong>SDG 2</strong> and <strong>SDG 12</strong>.
+        </p>
+        <div class="hero-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn-custom-primary">Go to Dashboard</a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn-custom-primary">Get Started Free</a>
+                <a href="{% url 'login' %}" class="btn-custom-outline">Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-image">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Fresh Food">
+    </div>
+</section>
+
+<section id="features">
+    <div class="text-center">
+        <h2 style="font-weight: 800; color: #1f2937;">Why Choose ZeroWaste?</h2>
+        <p class="text-muted">Tools designed for the modern sustainable home.</p>
+    </div>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🍎</div>
+            <h3>Smart Expiry Tracking</h3>
+            <p class="text-muted">Get visual alerts (Red/Yellow/Green) before food goes bad. Never throw away groceries again.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Waste Analytics</h3>
+            <p class="text-muted">Monitor your inventory patterns. See exactly how much money you are saving monthly.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3>Sustainability Tips</h3>
+            <p class="text-muted">Access curated resources on meal planning and storage tips specific to your items.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3>Eco Impact</h3>
+            <p class="text-muted">Directly support SDG 12 (Responsible Consumption) by reducing household food waste.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mt-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 style="font-weight: 800;">Simple, Intuitive Dashboard</h2>
+            <p class="text-muted">Manage your fridge, pantry, and freezer in one place.</p>
+            <ul class="list-unstyled mt-4">
+                <li class="mb-2">✅ <strong>Color-coded</strong> freshness indicators</li>
+                <li class="mb-2">✅ <strong>Filter</strong> by category (Dairy, Meat, Veg)</li>
+                <li class="mb-2">✅ <strong>Quick Add</strong> with receipt scanning (UI)</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white border-0">
+                    <strong>Recent Items</strong>
+                </div>
+                <table class="table table-hover mb-0">
+                    <tbody>
+                        <tr>
+                            <td>🥛 Milk</td>
+                            <td><span class="badge badge-warning">Expiring in 2 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>🥦 Broccoli</td>
+                            <td><span class="badge badge-success">Fresh</span></td>
+                        </tr>
+                        <tr>
+                            <td>🥩 Beef</td>
+                            <td><span class="badge badge-danger">Expired</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title">📉 Smart Insights</h3>
-                <p class="card-text">Visual indicators (Red/Yellow/Green) show you exactly what needs to be eaten first.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title">🌍 Sustainability</h3>
-                <p class="card-text">Receive tips on waste reduction and nutrition to support responsible consumption.</p>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
+
+<section class="cta-section">
+    <h2>Start Your Zero-Waste Journey Today</h2>
+    <p class="mb-4" style="opacity: 0.9;">Join the community of conscious consumers.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg" style="color: var(--primary-green); font-weight: bold; border-radius: 50px;">Create Free Account</a>
+</section>
+
 {% endblock %}

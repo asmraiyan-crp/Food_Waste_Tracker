@@ -1,0 +1,41 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<div class="jumbotron text-center bg-white border-bottom shadow-sm">
+    <h1 class="display-4 text-success">🌱 Zero Waste, Zero Hunger</h1>
+    <p class="lead">Smart food tracking to help you reduce waste and save money.</p>
+    <hr class="my-4">
+    <p>Aligned with <strong>SDG 2 (Zero Hunger)</strong> and <strong>SDG 12 (Responsible Consumption)</strong>.</p>
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg px-4" href="{% url 'register' %}" role="button">Get Started</a>
+        <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'login' %}" role="button">Login</a>
+    </div>
+</div>
+
+<div class="row text-center mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">🍎 Expiry Tracking</h3>
+                <p class="card-text">Log your groceries and get alerts before your food goes bad. Keep your inventory organized.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">📉 Smart Insights</h3>
+                <p class="card-text">Visual indicators (Red/Yellow/Green) show you exactly what needs to be eaten first.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">🌍 Sustainability</h3>
+                <p class="card-text">Receive tips on waste reduction and nutrition to support responsible consumption.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

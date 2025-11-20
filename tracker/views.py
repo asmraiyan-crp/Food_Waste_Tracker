@@ -16,22 +16,66 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'tracker/register.html', {'form': form})
 
+# tracker/views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils import timezone # Import timezone
+from datetime import date       # Import date
+
+from .forms import FoodItemForm, ProfileForm
+from .models import FoodItem, Resource, Profile, ConsumptionLog
+
+# ... (Keep home and register views as they are) ...
+
+# --- UPDATED DASHBOARD (Requirement 3 & 5) ---
 @login_required
 def dashboard(request):
+    # 1. Base Query
     items = FoodItem.objects.filter(user=request.user).order_by('expiry_date')
+    
+    # 2. Handle Filters (Requirement 3)
+    cat_filter = request.GET.get('category')
+    status_filter = request.GET.get('status')
+
+    if cat_filter:
+        items = items.filter(category=cat_filter)
+    
+    if status_filter == 'expired':
+        items = [i for i in items if i.days_remaining < 0]
+    elif status_filter == 'soon':
+        items = [i for i in items if 0 <= i.days_remaining <= 3]
+
+    # 3. Recommendation Logic (Requirement 5)
+    # "Recommend resources based on simple matches"
+    # Get unique categories from the user's ACTUAL inventory
+    user_categories = FoodItem.objects.filter(user=request.user).values_list('category', flat=True).distinct()
+    
+    # Filter resources that match those categories
+    recommended_resources = Resource.objects.filter(category__in=user_categories).order_by('?')[:3] # Random 3
+
+    # 4. Calculate Stats (for the top cards)
+    # We query the DB again for stats so filters don't mess up the "Total" counts
+    all_items = FoodItem.objects.filter(user=request.user)
+    
     context = {
         'items': items,
-        'total': items.count(),
-        'expired_count': sum(1 for i in items if i.days_remaining < 0),
-        'soon_count': sum(1 for i in items if 0 <= i.days_remaining <= 3)
+        'resources': recommended_resources, # <-- Sending tips to UI
+        'total': all_items.count(),
+        'expired_count': sum(1 for i in all_items if i.days_remaining < 0),
+        'soon_count': sum(1 for i in all_items if 0 <= i.days_remaining <= 3),
+        'current_filter': cat_filter or status_filter # To highlight active button
     }
     return render(request, 'tracker/dashboard.html', context)
 
+# ... (Keep profile, resources, and CRUD views as they are) ...
+
+# --- REQUIREMENT 4: Resources Page ---
+@login_required
 def resources(request):
-    # Fetch all resources
     all_resources = Resource.objects.all()
     return render(request, 'tracker/resources.html', {'resources': all_resources})
-    
 
 @login_required
 def add_item(request):

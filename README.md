@@ -118,7 +118,9 @@ python manage.py runserver
 
 URL: http://127.0.0.1:8000/
 
-Login: Use the credentials above to see the dashboard logic in action.
+Login:
+  username:demo_user
+  password:password123
 
 ------------------------------------------------------------------------
 

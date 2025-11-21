@@ -67,6 +67,7 @@ source venv/bin/activate
 
 # Install Python Dependencies
 pip install django psycopg2-binary pillow django-crispy-forms crispy-bootstrap4
+sudo pacman -S tesseract tesseract-data-eng
 ```
 
 ### 3. Database Configuration

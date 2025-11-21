@@ -1,15 +1,42 @@
 {% extends 'tracker/base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
-<div class="card">
-    <div class="card-header">{{ title }}</div>
-    <div class="card-body">
-        <form method="post">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-success">Save Item</button>
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
-        </form>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    {% if form.instance.pk %}
+                        <i class="fas fa-edit"></i> Edit Item
+                    {% else %}
+                        <i class="fas fa-plus-circle"></i> Add New Item
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {{ form|crispy }}
+                    
+                    <div class="alert alert-info small">
+                        <i class="fas fa-camera"></i> 
+                        <strong>Requirement 6:</strong> Upload a receipt or food label image here. 
+                        (No AI processing in Part 1, just storage).
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success px-5">
+                            <i class="fas fa-save"></i> Save Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

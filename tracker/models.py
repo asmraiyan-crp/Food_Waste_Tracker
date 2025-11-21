@@ -64,7 +64,12 @@ class FoodItem(models.Model):
 
 # --- REQUIREMENT 4: Resources ---
 class Resource(models.Model):
-    TYPE_CHOICES = [('Article', 'Article'), ('Video', 'Video')]
+    # Update choices to include 'Recipe'
+    TYPE_CHOICES = [
+        ('Article', 'Article'), 
+        ('Video', 'Video'), 
+        ('Recipe', 'Recipe')  # <--- Added this
+    ]
     
     title = models.CharField(max_length=200)
     description = models.TextField()

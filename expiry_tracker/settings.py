@@ -79,3 +79,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
+
+
+import os
+# --- FIXED MEDIA SETTINGS ---
+# 1. The URL browser uses to access files
+MEDIA_URL = '/receipts/'  
+
+# 2. The folder on your computer where files are saved
+MEDIA_ROOT = os.path.join(BASE_DIR, 'receipts')

@@ -1,0 +1,75 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="fas fa-camera"></i> Manage Image</h4>
+            </div>
+            <div class="card-body text-center">
+                <h5 class="mb-3">Upload Receipt/Label for <strong>{{ item.name }}</strong></h5>
+                
+                {% if item.receipt_image %}
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <p class="text-muted small mb-2 font-weight-bold">Current Image:</p>
+                        
+                        <img src="{{ item.receipt_image.url }}" class="img-fluid rounded shadow-sm mb-3" style="max-height: 300px; object-fit: contain;">
+                        
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ item.receipt_image.url }}" target="_blank" class="btn btn-sm btn-outline-secondary mr-2">
+                                <i class="fas fa-external-link-alt"></i> View Full Size
+                            </a>
+
+                            <form action="{% url 'delete_image' item.pk %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Remove Image
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i> No image uploaded yet.
+                    </div>
+                {% endif %}
+
+                <hr>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group text-left">
+                        <label class="font-weight-bold">Select New Image:</label>
+                        <div class="custom-file">
+                            <input type="file" name="receipt_image" class="custom-file-input" id="customFile" accept="image/*" required>
+                            <label class="custom-file-label" for="customFile">Choose file...</label>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            <i class="fas fa-info-circle"></i> Supports JPG, PNG. (Requirement 6)
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-info px-4">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Image
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.custom-file-input').addEventListener('change', function(e){
+        var fileName = document.getElementById("customFile").files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
+</script>
+{% endblock %}

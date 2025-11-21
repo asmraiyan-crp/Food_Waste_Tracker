@@ -79,31 +79,50 @@ class Command(BaseCommand):
         Resource.objects.all().delete()
         
         resource_data = [
-            ("How to Store Milk", "Dairy", "Article"),
-            ("Freezing Cheese Guide", "Dairy", "Video"),
-            ("Keep Leafy Greens Fresh", "Vegetables", "Article"),
-            ("Regrow Green Onions", "Vegetables", "Video"),
-            ("Root Veggie Storage", "Vegetables", "Article"),
-            ("Banana Storage Hacks", "Fruits", "Video"),
-            ("Freezing Berries", "Fruits", "Article"),
-            ("Meat Safety 101", "Meat", "Article"),
-            ("Understanding Expiry Labels", "Meat", "Video"),
-            ("Pantry Moth Prevention", "Grains", "Article"),
-            ("Rice Storage Tips", "Grains", "Video"),
-            ("Zero Waste Cooking", "Vegetables", "Article"),
-            ("Composting Basics", "Vegetables", "Video"),
-            ("Meal Planning on a Budget", "Grains", "Article"),
-            ("Leftover Makeovers", "Meat", "Article"),
+            ("How to Store Milk", "Dairy", "Article","https://dairyfarmersofcanada.ca/en/canadian-goodness/articles/freeze-store-milk"),
+            ("Freezing Cheese Guide", "Dairy", "Video","https://youtu.be/WEIElFEZd-Q?si=Wf1WvLdJzstP209-"),
+            ("Keep Leafy Greens Fresh", "Vegetables", "Article","https://food-guide.canada.ca/en/cooking-skills/storing-leafy-greens/"),
+            ("Regrow Green Onions", "Vegetables", "Video","https://youtu.be/kfTr9nYogW8?si=X7_nRKlBtZmFDchw"),
+            ("Root Veggie Storage", "Vegetables", "Article","https://yardandgarden.extension.iastate.edu/how-to/storing-winter-storage-vegetables"),
+            ("Banana Storage Hacks", "Fruits", "Video","https://youtu.be/-visWu3V0gA?si=LPkDB3abzAMGL1TB"),
+            ("Freezing Berries", "Fruits", "Article","https://extension.umd.edu/resource/berry-good-guide-freezing-berries-year-round-enjoyment/"),
+            ("Meat Safety 101", "Meat", "Article","https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics"),
+            ("Understanding Expiry Labels", "Meat", "Video","https://youtu.be/vZJIQ40eUyk?si=LBlMMB_8_HeHtmkl"),
+            ("Pantry Moth Prevention", "Grains", "Article","https://www.realsimple.com/how-to-prevent-pantry-moths-11685751"),
+            ("Rice Storage Tips", "Grains", "Video","https://youtu.be/yR7maPU7cTM?si=AU2mgzn-ezUIBn3l"),
+            ("Zero Waste Cooking", "Vegetables", "Article","https://zerowastechef.com/"),
+            ("Composting Basics", "Vegetables", "Video","https://youtu.be/4Fskb_7z86M?si=bRWa0fAfqV1WjCeN"),
+            ("Meal Planning on a Budget", "Grains", "Article","https://www.bbcgoodfood.com/feature/budget"),
+            ("Leftover Makeovers", "Meat", "Article","https://hgic.clemson.edu/leftover-makeover/"),
         ]
 
-        for title, cat, rtype in resource_data:
+        for title, cat, rtype, urls in resource_data:
             Resource.objects.create(
                 title=title,
                 description=f"Learn how to extend the shelf life of {cat} and reduce waste.",
-                url="https://www.fao.org/food-loss-and-food-waste/flw-data)",
+                url=urls,
                 category=cat,
                 resource_type=rtype
             )
         self.stdout.write(f"   - Seeded {len(resource_data)} Resources")
+
+        recipe_data = [
+            ("Sour Milk Pancakes", "Dairy", "Recipe","https://everylittlecrumb.com/sour-milk-pancakes/"),
+            ("Banana Bread (Overripe)", "Fruits", "Recipe","https://www.allrecipes.com/recipe/20144/banana-banana-bread/"),
+            ("Vegetable Scrap Stock", "Vegetables", "Recipe","https://itdoesnttastelikechicken.com/make-vegetable-broth-veggie-scraps/"),
+            ("Bread Pudding (Stale Bread)", "Grains", "Recipe","https://www.allrecipes.com/recipe/7177/bread-pudding-ii/"),
+            ("Fried Rice (Leftover Rice)", "Grains", "Recipe","https://www.thekitchn.com/fried-rice-recipe-23652991"),
+            ("Smoothie Packs (Dying Fruit)", "Fruits", "Recipe","https://www.laurafuentes.com/smoothie-freezer-packs/"),
+        ]
+
+        for title, cat, rtype, urls in recipe_data:
+            Resource.objects.create(
+                title=title,
+                description=f"Don't throw it away! Use your expiring {cat} to make this delicious meal.",
+                url= urls,
+                category=cat,
+                resource_type=rtype
+            )
+        self.stdout.write(f"   - Seeded {len(recipe_data)} Recipes")
 
         self.stdout.write(self.style.SUCCESS('✅ Database Seeded Successfully!'))

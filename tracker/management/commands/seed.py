@@ -107,19 +107,19 @@ class Command(BaseCommand):
         self.stdout.write(f"   - Seeded {len(resource_data)} Resources")
 
         recipe_data = [
-            ("Sour Milk Pancakes", "Dairy", "Recipe"),
-            ("Banana Bread (Overripe)", "Fruits", "Recipe"),
-            ("Vegetable Scrap Stock", "Vegetables", "Recipe"),
-            ("Bread Pudding (Stale Bread)", "Grains", "Recipe"),
-            ("Fried Rice (Leftover Rice)", "Grains", "Recipe"),
-            ("Smoothie Packs (Dying Fruit)", "Fruits", "Recipe"),
+            ("Sour Milk Pancakes", "Dairy", "Recipe","https://everylittlecrumb.com/sour-milk-pancakes/"),
+            ("Banana Bread (Overripe)", "Fruits", "Recipe","https://www.allrecipes.com/recipe/20144/banana-banana-bread/"),
+            ("Vegetable Scrap Stock", "Vegetables", "Recipe","https://itdoesnttastelikechicken.com/make-vegetable-broth-veggie-scraps/"),
+            ("Bread Pudding (Stale Bread)", "Grains", "Recipe","https://www.allrecipes.com/recipe/7177/bread-pudding-ii/"),
+            ("Fried Rice (Leftover Rice)", "Grains", "Recipe","https://www.thekitchn.com/fried-rice-recipe-23652991"),
+            ("Smoothie Packs (Dying Fruit)", "Fruits", "Recipe","https://www.laurafuentes.com/smoothie-freezer-packs/"),
         ]
 
-        for title, cat, rtype in recipe_data:
+        for title, cat, rtype, urls in recipe_data:
             Resource.objects.create(
                 title=title,
                 description=f"Don't throw it away! Use your expiring {cat} to make this delicious meal.",
-                url="https://www.allrecipes.com/recipes/17570/everyday-cooking/more-meal-ideas/leftovers/",
+                url= urls,
                 category=cat,
                 resource_type=rtype
             )
